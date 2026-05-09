@@ -23,30 +23,33 @@ def display_stock():
 def get_user_input():
     stocks=[]
     while True:
-        stock_name=input("Enter stock symbol(or 'Done' to finish the program): ").upper().strip()
-        if stock_name=="DONE":
-            break
+        
         become=False
         i = 0
         while i<3:
-            if stock_name not in stock_prices:
+            stock_name=input("Enter stock symbol(or 'Done' to finish the program): ").upper().strip()
+            if stock_name=="DONE":
+                break
+            if stock_name in stock_prices:
+                break
+            else:
                 print(f"❌ '{stock_name}' not found in our database!")
                 print("Available stocks:", ", ".join(stock_prices.keys()))
                 i+=1
-            else:
-                become=True
-                break
-        if not become:
-            print("To many trys\U0001F614")
-            continue
+
+                if i==3:
+                    print("To many trys\U0001F614")
+                    continue
         try:
-            quantity=float(input(f"Enter Quantity of {stock_name}: "))
-            become=False
             i = 0
             while i<3:
+                quantity=float(input(f"Enter Quantity of {stock_name}: "))
                 if quantity<=0:
                     print("❌ Quantity must be positive!")
                     i+=1
+                    if i==3:
+                        print("To many trys\U0001F614")
+                        continue
                 else:
                     stocks.append({
                         "Symbol":stock_name,
@@ -55,9 +58,7 @@ def get_user_input():
                     })
                     print(f"✅ Added {quantity} shares of {stock_name}")
                     break
-            if not become:
-                print("To many trys\U0001F614")
-                continue
+                
         except ValueError:
             print("Invalid value.please enter a number")
     return stocks
