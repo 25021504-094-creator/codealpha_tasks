@@ -29,7 +29,7 @@ def get_user_input():
         while i<3:
             stock_name=input("Enter stock symbol(or 'Done' to finish the program): ").upper().strip()
             if stock_name=="DONE":
-                break
+                return None
             if stock_name in stock_prices:
                 break
             else:
@@ -43,6 +43,8 @@ def get_user_input():
         try:
             i = 0
             while i<3:
+                if stock_name=="DONE":
+                    return None
                 quantity=float(input(f"Enter Quantity of {stock_name}: "))
                 if quantity<=0:
                     print("❌ Quantity must be positive!")
