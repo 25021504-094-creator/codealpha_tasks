@@ -1,7 +1,7 @@
 import csv
 import os
 from datetime import datetime
-stock_prices={
+STOCK_PRICES={
     "AAPL":280,
     "MSFT":420,
     "NVDA":900,
@@ -17,53 +17,42 @@ stock_prices={
 def display_stock():
     print("\n📊 Available Stocks:")
     print("-" * 40)
-    for symbol,price in stock_prices.items():
+    for symbol,price in STOCK_PRICES.items():
         print(f"{symbol:>8}-${price:.2f}")
     print("-" * 40)
 def get_user_input():
-    stocks=[]
+    stocks = []
+    
     while True:
+        print("\n" + "="*50)
+        stock_name = input("Enter stock symbol (or 'done' to finish): ").upper().strip()
         
-        become=False
-        i = 0
-        while i<3:
-            stock_name=input("Enter stock symbol(or 'Done' to finish the program): ").upper().strip()
-            if stock_name=="DONE":
-                return None
-            if stock_name in stock_prices:
-                break
-            else:
-                print(f"❌ '{stock_name}' not found in our database!")
-                print("Available stocks:", ", ".join(stock_prices.keys()))
-                i+=1
-
-                if i==3:
-                    print("To many trys\U0001F614")
-                    continue
+        if stock_name == 'DONE':
+            break
+        
+        if stock_name not in STOCK_PRICES:
+            print(f"❌ '{stock_name}' not found in our database!")
+            print("Available stocks:", ", ".join(STOCK_PRICES.keys()))
+            continue
+        
         try:
-            i = 0
-            while i<3:
-                if stock_name=="DONE":
-                    return None
-                quantity=float(input(f"Enter Quantity of {stock_name}: "))
-                if quantity<=0:
-                    print("❌ Quantity must be positive!")
-                    i+=1
-                    if i==3:
-                        print("To many trys\U0001F614")
-                        continue
-                else:
-                    stocks.append({
-                        "Symbol":stock_name,
-                        "Quantity":quantity,
-                        "price":stock_prices[stock_name]
-                    })
-                    print(f"✅ Added {quantity} shares of {stock_name}")
-                    break
-                
+            quantity = float(input(f"Enter quantity of {stock_name}: "))
+            if quantity <= 0:
+                print("❌ Quantity must be positive!")
+                continue
+            
+            stocks.append({
+                'Symbol': stock_name,
+                'Quantity': quantity,
+                'price': STOCK_PRICES[stock_name]
+            })
+            print(f"✅ Added {quantity} shares of {stock_name}")
+            
         except ValueError:
-            print("Invalid value.please enter a number")
+            print("❌ Please enter a valid number for quantity!")
+    
     return stocks
+
 def calculate_totalvalue(stocks):
     total=0
     for stock in stocks:
@@ -87,7 +76,7 @@ def save_to_txt(stock,total_value):
         filename=f"Stocks{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
         with open(filename,"w") as file:
             file.write("\n" + "__"*60)
-            file.write("📈 STOCKS RECORD\n")
+            file.write(" STOCKS RECORD\n")
             file.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             file.write("__"*60)
             file.write(f"{'Symbol':<10} {'Quantity':<12} {'Price':<12} {'Total Value':<15}")
@@ -96,7 +85,7 @@ def save_to_txt(stock,total_value):
                 stock_value=stock["Quantity"]*stock["price"]
                 file.write(f"{stock["Symbol"]:<10}{stock["Quantity"]:<12.2f}{stock["price"]:<11.2f}{stock_value:14.2f}")
             file.write("__"*60)
-            file.write(f"\n💰 TOTAL INVESTMENT: ${total_value:,.2f}")
+            file.write(f"\n TOTAL INVESTMENT: ${total_value:,.2f}")
             file.write("__"*60)
         print(f"\n✅ Stocks saved to: {filename}")
         return True
@@ -115,10 +104,10 @@ def save_to_csv(stock,total_value):
             
             # Write stock data
             for stock in stock:
-                stock_value = stock['quantity'] * stock['price']
+                stock_value = stock['Quantity'] * stock['price']
                 writer.writerow([
-                    stock['symbol'],
-                    stock['quantity'],
+                    stock['Symbol'],
+                    stock['Quantity'],
                     f"${stock['price']:.2f}",
                     f"${stock_value:.2f}"
                 ])
